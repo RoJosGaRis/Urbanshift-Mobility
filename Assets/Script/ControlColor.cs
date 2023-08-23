@@ -24,7 +24,7 @@ public class ControlColor : MonoBehaviour
         }
     }
 
-    void SetColor(int state){
+    public void SetColor(int state){
         if(state == 0){
             currentLight.color = new Color(0, 255, 0);
             currentState = state;
