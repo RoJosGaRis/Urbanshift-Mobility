@@ -16,6 +16,7 @@ public class JSONRequests : MonoBehaviour
     [SerializeField] float spawnPercentage;
     [SerializeField] float reservePercentage;
     [SerializeField] int reservationHoldingTime;
+    [SerializeField] float badAgentPercentage;
 
     [System.Serializable]
     public class Car{
@@ -93,6 +94,7 @@ public class JSONRequests : MonoBehaviour
         form.AddField("spawnPercentage", spawnPercentage.ToString());
         form.AddField("reservePercentage", reservePercentage.ToString());
         form.AddField("reservationHoldingTime", reservationHoldingTime);
+        form.AddField("reservationHoldingTime", badAgentPercentage.ToString());
 
         using (UnityWebRequest request = UnityWebRequest.Post("http://127.0.0.1:5000/change", form)){
             yield return request.SendWebRequest();
