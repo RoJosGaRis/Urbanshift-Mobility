@@ -7,7 +7,8 @@ using UnityEngine;
 public class CarMovement : MonoBehaviour
 {
     [SerializeField] float speed = 0.1f;
-    Vector3 target;
+    Vector3 target = new Vector3(-1,-1,-1);
+    Vector3 targetAngle = new Vector3(-1,-1,-1);
     bool isMoving = false;
     List<Tuple<float, float>> posiciones = new List<Tuple<float, float>>();
     // Vector3 startPosition = new Vector3(5.5f,1.3f,5f);
@@ -16,7 +17,15 @@ public class CarMovement : MonoBehaviour
         transform.position = startPosition;
     }
 
+    // void Update(){
+    //     Move();
+    // }
+
     public void AddToList(Tuple<float, float> newPosition){
+        if(target != new Vector3(-1,-1,-1) && targetAngle != new Vector3(-1,-1,-1)){
+            transform.position = new Vector3(target.x , 6, target.z);
+            transform.eulerAngles = targetAngle;
+        }
         posiciones.Add(newPosition);
         Debug.Log("Added to list");
         Move();
@@ -28,10 +37,13 @@ public class CarMovement : MonoBehaviour
             posiciones.RemoveAt(0);
             return;
         } else {
+            // StopAllCoroutines();
             isMoving = true;
             Debug.Log("Going to move");
             float currentCoordX = posiciones[0].Item1;
             float currentCoordZ = posiciones[0].Item2;
+            // StopCoroutine(Move");
+            
             Vector3 currentCoordVector = new Vector3(currentCoordX , 6, currentCoordZ);
             target = currentCoordVector;
             posiciones.RemoveAt(0);
@@ -46,7 +58,7 @@ public class CarMovement : MonoBehaviour
         }
         //yield return new WaitForSeconds(0.5f);
         Vector3 startAngle = transform.eulerAngles;
-        Vector3 targetAngle = transform.eulerAngles;
+        targetAngle = transform.eulerAngles;
         Vector3 startPosition = transform.position;
 
         startAngle.y = Mathf.Floor(startAngle.y);
@@ -79,9 +91,10 @@ public class CarMovement : MonoBehaviour
         
         while (transform.position != target)
         {
-            transform.position = Vector3.Lerp(startPosition, target, time * speed);
-            transform.eulerAngles = Vector3.Lerp(startAngle, targetAngle, time * speed);
+            transform.position = Vector3.Lerp(startPosition, target, time * 2 * speed);
+            transform.eulerAngles = Vector3.Lerp(startAngle, targetAngle, time * 2 * speed);
             time += Time.deltaTime;
+            yield return new WaitForSeconds(0.001f);
         }
 
         isMoving = false;

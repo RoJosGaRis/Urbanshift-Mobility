@@ -5,13 +5,14 @@ using UnityEngine;
 public class ControlColor : MonoBehaviour
 {
     [SerializeField] Light currentLight;
+    [SerializeField] public string index;
     int currentState = 0;
 
     // Start is called before the first frame update
     void Start()
     {
         // currentLight.color = new Color(0, 255, 0);
-        StartCoroutine("testSwitch");
+        // StartCoroutine("testSwitch");
     }
 
     // Update is called once per frame
