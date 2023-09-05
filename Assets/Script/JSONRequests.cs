@@ -9,6 +9,14 @@ using UnityEngine.Networking;
 
 public class JSONRequests : MonoBehaviour
 {
+
+    [SerializeField] int numPermVehicles;
+    [SerializeField] int numTempVehicles;
+    [SerializeField] int numActiveVehicles;
+    [SerializeField] float spawnPercentage;
+    [SerializeField] float reservePercentage;
+    [SerializeField] int reservationHoldingTime;
+
     [System.Serializable]
     public class Car{
         public string index;
@@ -50,7 +58,12 @@ public class JSONRequests : MonoBehaviour
     }
 
     public void ResetSimStart(){
+        StartCoroutine(ResetValues());
         StartCoroutine(ResetSim());
+    }
+
+    public void GetResultsStart(){
+        StartCoroutine(GetResults());
     }
 
     public IEnumerator FetchData(){
@@ -60,7 +73,6 @@ public class JSONRequests : MonoBehaviour
                 Debug.Log(request.error);
             }
             else {
-                Debug.Log(request.downloadHandler.text);
                 yield return mainList = JsonUtility.FromJson<MainList>(request.downloadHandler.text);
                 // foreach(Car car in mainList.vehicleAgents){
                 //     Debug.Log(car.index);
@@ -69,6 +81,23 @@ public class JSONRequests : MonoBehaviour
             if(mainList.vehicleAgents != null){
                 handleCars(mainList.vehicleAgents);
                 handleLights(mainList.lightAgents);
+            }
+        }
+    }
+
+    public IEnumerator ResetValues(){
+        WWWForm form = new WWWForm();
+        form.AddField("numPermVehicles", numPermVehicles);
+        form.AddField("numTempVehicles", numTempVehicles);
+        form.AddField("numActiveVehicles", numActiveVehicles);
+        form.AddField("spawnPercentage", spawnPercentage.ToString());
+        form.AddField("reservePercentage", reservePercentage.ToString());
+        form.AddField("reservationHoldingTime", reservationHoldingTime);
+
+        using (UnityWebRequest request = UnityWebRequest.Post("http://127.0.0.1:5000/change", form)){
+            yield return request.SendWebRequest();
+            if (request.result == UnityWebRequest.Result.ConnectionError){
+                Debug.Log(request.error);
             }
         }
     }
@@ -83,6 +112,27 @@ public class JSONRequests : MonoBehaviour
                     Destroy(carDictionary.ElementAt(i).Value.gameObject);
                 }
                 carDictionary.Clear();
+            }
+        }
+    }
+
+    [System.Serializable]
+    public class Results{
+        public string first;
+        public string second;
+        public string third;
+    }
+    public IEnumerator GetResults(){
+        using (UnityWebRequest request = UnityWebRequest.Get("http://127.0.0.1:5000/results")){
+            yield return request.SendWebRequest();
+            if (request.result == UnityWebRequest.Result.ConnectionError){
+                Debug.Log(request.error);
+            } else {
+                yield return JsonUtility.FromJson<Results>(request.downloadHandler.text);
+                Debug.Log(JsonUtility.FromJson<Results>(request.downloadHandler.text).first);
+                Debug.Log(JsonUtility.FromJson<Results>(request.downloadHandler.text).second);
+                Debug.Log(JsonUtility.FromJson<Results>(request.downloadHandler.text).third);
+
             }
         }
     }

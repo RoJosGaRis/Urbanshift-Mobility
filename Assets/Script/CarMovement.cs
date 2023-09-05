@@ -27,7 +27,6 @@ public class CarMovement : MonoBehaviour
             transform.eulerAngles = targetAngle;
         }
         posiciones.Add(newPosition);
-        Debug.Log("Added to list");
         Move();
     }
     // Update is called once per frame
@@ -39,7 +38,6 @@ public class CarMovement : MonoBehaviour
         } else {
             // StopAllCoroutines();
             isMoving = true;
-            Debug.Log("Going to move");
             float currentCoordX = posiciones[0].Item1;
             float currentCoordZ = posiciones[0].Item2;
             // StopCoroutine(Move");
